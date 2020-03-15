@@ -33,12 +33,14 @@ const CountryIntentHandler = {
     
         console.log("countryKey: ", countryKey);
 
-        let countryActiveCases = "unknown";
+        let speakOutput = `${countrySlot} is currently unknown. Please ask for another country or say exit.`;
         if (covidData.countries[countryKey] !== undefined) {
-            countryActiveCases = covidData.countries[countryKey].activeCases;
+            const country = covidData.countries[countryKey];
+            const activeCases = country.activeCases;
+            const newCases = country.newCases !== undefined ? country.newCases : "unknown";
+            speakOutput = `${countrySlot} currently has ${activeCases} cases. ${newCases} change from yesterday. Ask for another country or say exit.`;
         }
     
-        const speakOutput = `${countrySlot} currently has ${countryActiveCases} cases. Ask for another country or say exit.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(`Please ask for another country or say exit.`)
