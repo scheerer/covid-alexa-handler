@@ -25,20 +25,20 @@ const CountryIntentHandler = {
     async handle(handlerInput) {
         const covidData = await loadCovidData();
         const currentIntent = handlerInput.requestEnvelope.request.intent;
-        const country = currentIntent.slots.country.value.toLowerCase();
+        const countrySlot = currentIntent.slots.country.value.toLowerCase();
         
-        console.log('The country is: ', country);
+        console.log('The country is: ', countrySlot);
 
-        const countryKey = countryLookup[country] !== undefined ? countryLookup[country] : country;
+        const countryKey = countryLookup[countrySlot] !== undefined ? countryLookup[countrySlot] : countrySlot;
     
+        console.log("countryKey: ", countryKey);
+
         let countryActiveCases = "unknown";
-        //FIXME: Fancy map by name lookup -- yuck manual :(
         if (covidData.countries[countryKey] !== undefined) {
-            country = covidData.countries[countryKey];
-            countryActiveCases = country.totalCases;
+            countryActiveCases = covidData.countries[countryKey].totalCases;
         }
     
-        const speakOutput = `${country} currently has ${countryActiveCases} cases.`;
+        const speakOutput = `${countrySlot} currently has ${countryActiveCases} cases.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
