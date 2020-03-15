@@ -130,6 +130,7 @@ const loadCovidData = async () => {
         }
     });
     
+    console.log("s3 response:", response);
     return JSON.parse(response.Body.toString());
 };
 
