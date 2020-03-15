@@ -28,18 +28,12 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub 'awscodestar-${ProjectId}-lambda-GetHelloWorld'
-      Handler: index.get
+      Handler: index.handler
       Runtime: nodejs12.x
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
-      Events:
-        GetEvent:
-          Type: Api
-          Properties:
-            Path: /
-            Method: get
   LambdaExecutionRole:
     Description: Creating service role in IAM for AWS Lambda
     Type: AWS::IAM::Role
@@ -51,6 +45,11 @@ Resources:
           Principal:
             Service: [lambda.amazonaws.com]
           Action: sts:AssumeRole
+        - Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+          Action: s3:getObject
+          Resource: arn:aws:s3:::blendedsoftware-covid-data/*
       Path: /
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
