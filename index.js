@@ -25,14 +25,16 @@ const CountryIntentHandler = {
     async handle(handlerInput) {
         const covidData = await loadCovidData();
         const currentIntent = handlerInput.requestEnvelope.request.intent;
-        const country = currentIntent.slots.country.value;
+        const country = currentIntent.slots.country.value.toLowerCase;
         
         console.log('The country is: ', country);
+
+        const countryKey = countryLookup[country] !== undefined ? countryLookup[country] : country;
     
         const countryActiveCases = "unknown";
         //FIXME: Fancy map by name lookup -- yuck manual :(
-        if (covidData.countries[country] !== undefined) {
-            country = covidData.countries[country];
+        if (covidData.countries[countryKey] !== undefined) {
+            country = covidData.countries[countryKey];
             countryActiveCases = country.totalCases;
         }
     
@@ -149,3 +151,14 @@ exports.handler = Alexa.SkillBuilders.custom()
         ErrorHandler,
     )
     .lambda();
+
+
+
+// key == Amazon.COUNTRY slot response from user
+// value == Country name from covid_data.json
+const countryLookup = {
+    "usa": "usa",
+    "united states": "usa",
+    "the united states": "usa",
+    "the usa": "usa"
+}
