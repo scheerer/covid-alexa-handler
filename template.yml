@@ -34,6 +34,7 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      Timeout: 7 #timeout for the Alexa
   LambdaExecutionRole:
     Description: Creating service role in IAM for AWS Lambda
     Type: AWS::IAM::Role
