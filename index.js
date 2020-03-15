@@ -10,7 +10,7 @@ const LaunchRequestHandler = {
     },
     async handle(handlerInput) {
         const covidData = await loadCovidData();
-        const speakOutput = `There are currently ${covidData.totalCases} cases worldwide. What country do you live in?`;
+        const speakOutput = `There are currently ${covidData.activeCases} cases worldwide. What country do you live in?`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt("I live in the cloud. Now tell me, what country do you live in?")
@@ -35,13 +35,13 @@ const CountryIntentHandler = {
 
         let countryActiveCases = "unknown";
         if (covidData.countries[countryKey] !== undefined) {
-            countryActiveCases = covidData.countries[countryKey].totalCases;
+            countryActiveCases = covidData.countries[countryKey].activeCases;
         }
     
-        const speakOutput = `${countrySlot} currently has ${countryActiveCases} cases.`;
+        const speakOutput = `${countrySlot} currently has ${countryActiveCases} cases. Ask for another country or say exit.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .reprompt(`Please ask for another country or say exit.`)
             .getResponse();
     }
 };
@@ -51,7 +51,7 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'You can ask me how many cases are there a country! How can I help?';
+        const speakOutput = 'You can ask me how many cases are there a country! For example, How many cases are in China?';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
