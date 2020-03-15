@@ -25,7 +25,7 @@ const CountryIntentHandler = {
     async handle(handlerInput) {
         const covidData = await loadCovidData();
         const currentIntent = handlerInput.requestEnvelope.request.intent;
-        const country = currentIntent.slots.country.value.toLowerCase;
+        const country = currentIntent.slots.country.value.toLowerCase();
         
         console.log('The country is: ', country);
 
