@@ -128,10 +128,8 @@ const loadCovidData = async () => {
         if (err) {
             console.log(err, err.stack); // an error occurred
         }
-    });
-    
-    console.log("s3 response:", response);
-    return response.body;
+    }).promise();
+    return JSON.parse(response.Body.toString());
 };
 
 
