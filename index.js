@@ -2,15 +2,15 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
+const AWS = require('aws-sdk');
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
-    handle(handlerInput) {
-        //TODO: Read from data JSON in S3
-        const totalCases = 100;
-        const speakOutput = `There are currently ${totalCases} cases worldwide. What country do you live in?`;
+    async handle(handlerInput) {
+        const covidData = await loadCovidData();
+        const speakOutput = `There are currently ${covidData.totalCases} cases worldwide. What country do you live in?`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt("I live in the cloud. Now tell me, what country do you live in?")
@@ -22,16 +22,21 @@ const CountryIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'CountryIntentHandler';
     },
-    handle(handlerInput) {
-    
+    async handle(handlerInput) {
+        const covidData = await loadCovidData();
         const currentIntent = handlerInput.requestEnvelope.request.intent;
         const country = currentIntent.slots.country.value;
         
         console.log('The country is: ', country);
-        
-        const activeCases = 10;
     
-        const speakOutput = `${country} currently has ${activeCases} cases.`;
+        const countryActiveCases = "unknown";
+        //FIXME: Fancy map by name lookup -- yuck manual :(
+        if (covidData.countries[country] !== undefined) {
+            country = covidData.countries[country];
+            countryActiveCases = country.totalCases;
+        }
+    
+        const speakOutput = `${country} currently has ${countryActiveCases} cases.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
@@ -113,29 +118,19 @@ const ErrorHandler = {
 };
 
 
-const loadCovidData = () => {
-  var params = {
-    Bucket: "examplebucket", 
-    Key: "SampleFile.txt", 
-    Range: "bytes=0-9"
- };
- s3.getObject(params, function(err, data) {
-   if (err) console.log(err, err.stack); // an error occurred
-   else     console.log(data);           // successful response
-   /*
-   data = {
-    AcceptRanges: "bytes", 
-    ContentLength: 10, 
-    ContentRange: "bytes 0-9/43", 
-    ContentType: "text/plain", 
-    ETag: "\"0d94420ffd0bc68cd3d152506b97a9cc\"", 
-    LastModified: <Date Representation>, 
-    Metadata: {
-    }, 
-    VersionId: "null"
-   }
-   */
- });  
+const loadCovidData = async () => {
+    const params = {
+        Bucket: "blendedsoftware-covid-data", 
+        Key: "covid_data.json"
+    };
+    const s3 = new AWS.S3();
+    const response = await s3.getObject(params, (err) => {
+        if (err) {
+            console.log(err, err.stack); // an error occurred
+        }
+    });
+    
+    return JSON.parse(response.Body.toString());
 };
 
 

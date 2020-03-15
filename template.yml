@@ -45,11 +45,6 @@ Resources:
           Principal:
             Service: [lambda.amazonaws.com]
           Action: sts:AssumeRole
-        - Effect: Allow
-          Principal:
-            Service: [lambda.amazonaws.com]
-          Action: s3:getObject
-          Resource: arn:aws:s3:::blendedsoftware-covid-data/*
       Path: /
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
