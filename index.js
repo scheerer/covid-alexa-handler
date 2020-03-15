@@ -31,7 +31,7 @@ const CountryIntentHandler = {
 
         const countryKey = countryLookup[country] !== undefined ? countryLookup[country] : country;
     
-        const countryActiveCases = "unknown";
+        let countryActiveCases = "unknown";
         //FIXME: Fancy map by name lookup -- yuck manual :(
         if (covidData.countries[countryKey] !== undefined) {
             country = covidData.countries[countryKey];
