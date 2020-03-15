@@ -51,7 +51,7 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'You can say hello to me! How can I help?';
+        const speakOutput = 'You can ask me how many cases are there a country! How can I help?';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
