@@ -1,0 +1,10 @@
+.env
+*.iml
+.vscode
+node_modules
+target
+
+.idea
+.settings
+.classpath
+
